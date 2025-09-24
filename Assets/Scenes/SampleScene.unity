@@ -672,7 +672,7 @@ Transform:
   m_GameObject: {fileID: 951987436}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.02, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0.57, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -942,6 +942,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1439334395}
+  - component: {fileID: 1439334396}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -965,6 +966,18 @@ Transform:
   - {fileID: 951987437}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1439334396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439334394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 119a2f9d3b5fca942a7c926360f965d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1554951878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1289,6 +1302,10 @@ PrefabInstance:
     - target: {fileID: 1638897056361737646, guid: c335a09be15920144bcc746cb007dd7c, type: 3}
       propertyPath: m_Color.r
       value: 0.4245283
+      objectReference: {fileID: 0}
+    - target: {fileID: 1638897056361737646, guid: c335a09be15920144bcc746cb007dd7c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2351548858920489802, guid: c335a09be15920144bcc746cb007dd7c, type: 3}
       propertyPath: m_Name
