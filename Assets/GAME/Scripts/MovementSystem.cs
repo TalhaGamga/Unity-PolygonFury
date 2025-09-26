@@ -2,14 +2,24 @@ using UnityEngine;
 
 public class MovementSystem : MonoBehaviour
 {
-    private IMover _mover;
+    private IMachine _mover;
+    [SerializeField] private ExternalSources _externalSources;
 
-    public void SetMover(IMover newMover)
+    [SerializeField] private RbMoverMachine _moverMachine;
+
+    private void Awake()
     {
-        _mover = newMover;
+        SetMoverMachine(_moverMachine);
     }
 
-    public void HandleInput(MovementType inputType)
+    public void SetMoverMachine(IMachine newMover)
+    {
+        _mover?.End();
+        _mover = newMover;
+        _mover.Init();
+    }
+
+    public void HandleInput(InputSignal inputType)
     {
         _mover?.HandleInput(inputType);
     }
@@ -20,9 +30,9 @@ public class MovementSystem : MonoBehaviour
     }
 
     [System.Serializable]
-    public class MovementSystemContext
+    public class ExternalSources
     {
-        public Rigidbody Rb;
+        public Rigidbody2D Rb;
         public Transform MoverTansform;
         public Transform OrientationTransform;
         public Transform[] GroundCheckPoints;

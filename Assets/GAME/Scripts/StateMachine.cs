@@ -118,11 +118,11 @@ namespace DevVorpian
         }
     }
 
-    public class StateTransition<StateType>
+    public class StateTransition<ActionType>
     {
         private ConcreteState _from;
         private ConcreteState _to;
-        private StateType _targetStateType;
+        private ActionType _targetStateType;
         private Func<bool> _condition;
         private Action _onTransition;
         private int _priority { get; set; }
@@ -130,7 +130,7 @@ namespace DevVorpian
         public StateTransition(
             ConcreteState from,
             ConcreteState to,
-            StateType targetStateType,
+            ActionType targetStateType,
             Func<bool> condition = null,
             Action onTransition = null)
         {
@@ -143,7 +143,7 @@ namespace DevVorpian
 
         public ConcreteState From => _from;
         public ConcreteState To => _to;
-        public StateType TargetStateType => _targetStateType;
+        public ActionType TargetStateType => _targetStateType;
         public Func<bool> Condition => _condition;
         public Action OnTransition => _onTransition;
         public int Priority => _priority;
