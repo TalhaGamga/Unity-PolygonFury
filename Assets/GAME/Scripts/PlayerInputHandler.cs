@@ -25,6 +25,11 @@ public class PlayerInputHandler : MonoBehaviour
             HandleInput(SystemType.Movement, PlayerAction.Jump, isPressed);
         };
 
+        _input.JumpCancel += () =>
+        {
+            HandleInput(SystemType.Movement, PlayerAction.JumpCancel);
+        };
+
         _input.Dash += isPressed =>
         {
             HandleInput(SystemType.Movement, PlayerAction.Dash, isPressed);
@@ -38,7 +43,7 @@ public class PlayerInputHandler : MonoBehaviour
         _input.Enable();
     }
 
-    private void HandleInput(SystemType system, PlayerAction action, bool isHeld, object value = default)
+    private void HandleInput(SystemType system, PlayerAction action, bool isHeld = true, object value = default)
     {
         var behavior = InputBehaviorMap.Behavior.TryGetValue(action, out var b) ? b : InputBehavior.Eventful;
 

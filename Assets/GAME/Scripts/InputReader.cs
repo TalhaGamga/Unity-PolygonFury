@@ -14,6 +14,7 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputReader
 {
     public event UnityAction<Vector2> Move = delegate { };
     public event UnityAction<bool> Jump = delegate { };
+    public event UnityAction JumpCancel = delegate { };
     public event UnityAction<bool> Attack = delegate { };
     public event UnityAction<bool> Dash = delegate { };
     public event UnityAction Reload = delegate { };
@@ -48,7 +49,7 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputReader
                 Jump.Invoke(true);
                 break;
             case InputActionPhase.Canceled:
-                Jump.Invoke(false);
+                JumpCancel.Invoke();
                 break;
         }
     }

@@ -5,6 +5,7 @@ public enum PlayerAction
     Idle,
     Move,
     Jump,
+    JumpCancel,
     Fall,
     Dash,
     //
