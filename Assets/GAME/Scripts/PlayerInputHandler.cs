@@ -1,6 +1,7 @@
 using R3;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerInputHandler : MonoBehaviour
 {
@@ -20,9 +21,9 @@ public class PlayerInputHandler : MonoBehaviour
             HandleInput(SystemType.Movement, PlayerAction.Move, direction.magnitude > 0, direction);
         };
 
-        _input.Jump += isPressed =>
+        _input.Jump += () =>
         {
-            HandleInput(SystemType.Movement, PlayerAction.Jump, isPressed);
+            HandleInput(SystemType.Movement, PlayerAction.Jump);
         };
 
         _input.JumpCancel += () =>
@@ -30,14 +31,29 @@ public class PlayerInputHandler : MonoBehaviour
             HandleInput(SystemType.Movement, PlayerAction.JumpCancel);
         };
 
-        _input.Dash += isPressed =>
+        _input.Dash += () =>
         {
-            HandleInput(SystemType.Movement, PlayerAction.Dash, isPressed);
+            HandleInput(SystemType.Movement, PlayerAction.Dash);
         };
 
-        _input.Attack += isPressed =>
+        _input.Attack += () =>
         {
-            HandleInput(SystemType.Movement, PlayerAction.Attack, isPressed);
+            HandleInput(SystemType.Combat, PlayerAction.Attack);
+        };
+
+        _input.AttackCancel += () =>
+        {
+            HandleInput(SystemType.Combat, PlayerAction.Idle);
+        };
+
+        _input.MouseDrag += position =>
+        {
+            HandleInput(SystemType.Combat, PlayerAction.MouseDrag, (position.magnitude > 0), position);
+        };
+
+        _input.Reload += () =>
+        {
+            HandleInput(SystemType.Combat, PlayerAction.Reload);
         };
 
         _input.Enable();

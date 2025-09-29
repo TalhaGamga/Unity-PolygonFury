@@ -13,11 +13,13 @@ public interface IInputReader
 public class InputReader : ScriptableObject, IPlayerActions, IInputReader
 {
     public event UnityAction<Vector2> Move = delegate { };
-    public event UnityAction<bool> Jump = delegate { };
+    public event UnityAction Jump = delegate { };
     public event UnityAction JumpCancel = delegate { };
-    public event UnityAction<bool> Attack = delegate { };
-    public event UnityAction<bool> Dash = delegate { };
+    public event UnityAction Attack = delegate { };
+    public event UnityAction AttackCancel = delegate { };
+    public event UnityAction Dash = delegate { };
     public event UnityAction Reload = delegate { };
+    public event UnityAction<Vector2> MouseDrag = delegate { };
 
     public Vector2 Direction => _playerInputs.Player.Move.ReadValue<Vector2>();
     public bool IsJumpKeyPressed => _playerInputs.Player.Jump.IsPressed();
@@ -46,7 +48,7 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputReader
         switch (context.phase)
         {
             case InputActionPhase.Started:
-                Jump.Invoke(true);
+                Jump.Invoke();
                 break;
             case InputActionPhase.Canceled:
                 JumpCancel.Invoke();
@@ -59,10 +61,10 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputReader
         switch (context.phase)
         {
             case InputActionPhase.Started:
-                Attack.Invoke(true);
+                Attack.Invoke();
                 break;
             case InputActionPhase.Canceled:
-                Attack.Invoke(false);
+                AttackCancel.Invoke();
                 break;
         }
     }
@@ -72,10 +74,9 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputReader
         switch (context.phase)
         {
             case InputActionPhase.Started:
-                Dash.Invoke(true);
+                Dash.Invoke();
                 break;
             case InputActionPhase.Canceled:
-                Dash.Invoke(false);
                 break;
         }
     }
@@ -83,5 +84,10 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputReader
     public void OnReload(InputAction.CallbackContext context)
     {
         Reload?.Invoke();
+    }
+
+    public void OnMousePoint(InputAction.CallbackContext context)
+    {
+        MouseDrag?.Invoke(context.ReadValue<Vector2>());
     }
 }

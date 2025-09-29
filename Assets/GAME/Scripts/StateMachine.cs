@@ -138,7 +138,7 @@ namespace DevVorpian
             _to = to;
             _targetStateType = targetStateType;
             _condition = condition ?? (() => true);
-            _onTransition = onTransition ?? null;
+            _onTransition = onTransition ?? (() => { });
         }
 
         public ConcreteState From => _from;

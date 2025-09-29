@@ -10,6 +10,7 @@ public enum PlayerAction
     Dash,
     //
     Attack,
-    Reload
+    Reload,
+    MouseDrag
     // Extend as needed 
 }

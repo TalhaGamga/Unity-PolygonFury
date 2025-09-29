@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MousePoint",
+                    "type": "Value",
+                    "id": "78d53dcd-d1bb-4e1e-8a82-518a84dcf77a",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -77,7 +86,7 @@
                 {
                     "name": "",
                     "id": "329f7dbb-30e7-4886-84dd-1848caf09a6f",
-                    "path": "",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -88,7 +97,7 @@
                 {
                     "name": "",
                     "id": "87132cd7-6256-469a-8cd0-78cb2e335a74",
-                    "path": "",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -128,6 +137,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "eb6c2f82-2b3d-41d1-9174-a4fc16b1b853",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePoint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

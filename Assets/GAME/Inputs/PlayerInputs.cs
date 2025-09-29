@@ -71,6 +71,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MousePoint"",
+                    ""type"": ""Value"",
+                    ""id"": ""78d53dcd-d1bb-4e1e-8a82-518a84dcf77a"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -99,7 +108,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""329f7dbb-30e7-4886-84dd-1848caf09a6f"",
-                    ""path"": """",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -110,7 +119,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""87132cd7-6256-469a-8cd0-78cb2e335a74"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -150,6 +159,17 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb6c2f82-2b3d-41d1-9174-a4fc16b1b853"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MousePoint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -163,6 +183,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
+        m_Player_MousePoint = m_Player.FindAction("MousePoint", throwIfNotFound: true);
     }
 
     ~@PlayerInputs()
@@ -234,6 +255,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Reload;
+    private readonly InputAction m_Player_MousePoint;
     public struct PlayerActions
     {
         private @PlayerInputs m_Wrapper;
@@ -243,6 +265,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
+        public InputAction @MousePoint => m_Wrapper.m_Player_MousePoint;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -267,6 +290,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Reload.started += instance.OnReload;
             @Reload.performed += instance.OnReload;
             @Reload.canceled += instance.OnReload;
+            @MousePoint.started += instance.OnMousePoint;
+            @MousePoint.performed += instance.OnMousePoint;
+            @MousePoint.canceled += instance.OnMousePoint;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -286,6 +312,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Reload.started -= instance.OnReload;
             @Reload.performed -= instance.OnReload;
             @Reload.canceled -= instance.OnReload;
+            @MousePoint.started -= instance.OnMousePoint;
+            @MousePoint.performed -= instance.OnMousePoint;
+            @MousePoint.canceled -= instance.OnMousePoint;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -310,5 +339,6 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         void OnDash(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
+        void OnMousePoint(InputAction.CallbackContext context);
     }
 }
