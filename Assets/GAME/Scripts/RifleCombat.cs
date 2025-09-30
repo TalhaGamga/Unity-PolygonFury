@@ -1,4 +1,5 @@
 ﻿using DevVorpian;
+using System.Collections;
 using UnityEngine;
 
 [System.Serializable]
@@ -79,6 +80,8 @@ public class RifleCombat : ICombat
 
         setCharge(_context.ChargeCapacity);
         resetReloadStateVariables();
+
+        _context.Bullet.OnBulletHit += visualizeHit;
     }
 
     public void Update()
@@ -126,6 +129,7 @@ public class RifleCombat : ICombat
             return;
         }
 
+        _context.Bullet.Fire(_context.FirePoint.position, _context.FirePoint.right, float.MaxValue);
         _context.LastFireTime = Time.time;
         _context.CurrentCharge--;
     }
@@ -151,10 +155,17 @@ public class RifleCombat : ICombat
 
         Vector3 direction = toTarget.normalized;
 
-        _context.RifleSprite.flipY = (direction.x < 0);
-
+        // base rotation around Z axis (2D aiming)
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        _context.RifleTransform.rotation = Quaternion.Euler(0, 0, angle);
+        Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
+
+        // handle flipping: rotate 180° around X axis if aiming left
+        if (direction.x < 0)
+        {
+            rot *= Quaternion.Euler(180f, 0f, 0f);
+        }
+
+        _context.RifleTransform.rotation = rot;
     }
 
     private void setIsReloaded(bool isReloaded)
@@ -178,6 +189,21 @@ public class RifleCombat : ICombat
         setIsReloaded(false);
     }
 
+    private void visualizeHit(BulletHitInfo hitInfo)
+    {
+        _context.CoroutineCaller.StartCoroutine(visualizeHitCor(hitInfo));
+    }
+
+    private IEnumerator visualizeHitCor(BulletHitInfo hitInfo)
+    {
+        _context.LineRenderer.SetPosition(0, hitInfo.Origin);
+        _context.LineRenderer.SetPosition(1, hitInfo.EndPoint);
+        _context.LineRenderer.enabled = true;
+        yield return new WaitForSeconds(0.015f);
+        _context.LineRenderer.enabled = false;
+    }
+
+
 
     [System.Serializable]
     public class Context
@@ -190,7 +216,9 @@ public class RifleCombat : ICombat
         public float ReattackTime;
         public float ReloadTime;
         public float MinAimDistance;
-
+        public LineRenderer LineRenderer;
+        public MonoBehaviour CoroutineCaller;
+        public Hitscan Bullet;
 
         [Header("No predeterministics")]
         public PlayerAction CurrentAction;
