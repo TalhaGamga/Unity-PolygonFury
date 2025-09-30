@@ -16,14 +16,14 @@ public class RifleCombat : ICombat
         var reload = new ConcreteState("Reload");
         var neutral = new ConcreteState("Neutral");
 
-        var toIdle = new StateTransition<PlayerAction>(null, idle, PlayerAction.Idle, onTransition: () => Debug.Log("To Idle"));
-        var toFire = new StateTransition<PlayerAction>(null, fire, PlayerAction.Attack, condition: () => _context.CurrentCharge > 0, onTransition: () => Debug.Log("To Fire"));
+        var toIdle = new StateTransition<PlayerAction>(null, idle, PlayerAction.Idle, condition: () => _context.CurrentAction != PlayerAction.Reload);
+        var toFire = new StateTransition<PlayerAction>(null, fire, PlayerAction.Attack, condition: () => _context.CurrentCharge > 0 && _context.CurrentAction != PlayerAction.Reload);
         var toReload = new StateTransition<PlayerAction>(null, reload, PlayerAction.Reload, condition: () => _context.CurrentCharge < _context.ChargeCapacity && _context.CurrentAction != PlayerAction.Reload, onTransition: () => Debug.Log("To Reload"));
-        var fireToReload = new StateTransition<PlayerAction>(fire, reload, PlayerAction.Reload, condition: () => _context.CurrentCharge < 1, onTransition: () => Debug.Log("To Reload From Fire State"));
-        var reloadToNeutral = new StateTransition<PlayerAction>(reload, neutral, PlayerAction.Neutral, condition: () => _context.IsReloaded);
-        _stateMachine = new StateMachine<PlayerAction>();
 
-        _stateMachine.OnTransitionedAutonomously.AddListener(() => handleInput());
+        var fireToReload = new StateTransition<PlayerAction>(fire, reload, PlayerAction.Reload, condition: () => _context.CurrentCharge < 1);
+        var reloadToNeutral = new StateTransition<PlayerAction>(reload, neutral, PlayerAction.Neutral, condition: () => _context.IsReloaded, onTransition: () => Debug.Log("ToNeutral"));
+
+        _stateMachine = new StateMachine<PlayerAction>();
 
         _stateMachine.AddIntentBasedTransition(toFire);
         _stateMachine.AddIntentBasedTransition(toIdle);
@@ -51,7 +51,8 @@ public class RifleCombat : ICombat
 
         neutral.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Reload);
+            setContextState(PlayerAction.Neutral);
+            handleInput();
         });
         #endregion
 
@@ -96,12 +97,17 @@ public class RifleCombat : ICombat
 
         _stateMachine.SetState(inputSignal.Action);
 
-        _cachedInputSignal = inputSignal;
+        _cachedInputSignal = (inputSignal.Action != PlayerAction.MouseDrag) ? inputSignal : _cachedInputSignal;
     }
 
     private void handleInput()
     {
         HandleInput(_cachedInputSignal);
+    }
+
+    private void forceToNeutral()
+    {
+        _stateMachine.SetState(PlayerAction.Neutral);
     }
 
     public void End()
@@ -110,10 +116,9 @@ public class RifleCombat : ICombat
 
     private void handleFiring()
     {
-        Debug.Log("Firing");
         if (_context.CurrentCharge <= 0)
         {
-            Debug.Log("Out of Ammo");
+            //Debug.Log("Out of Ammo");
         }
 
         if (Time.time - _context.LastFireTime < _context.ReattackTime)
@@ -123,8 +128,6 @@ public class RifleCombat : ICombat
 
         _context.LastFireTime = Time.time;
         _context.CurrentCharge--;
-
-        Debug.Log($"Rifle fired! Remaining Ammo: {_context.CurrentCharge}");
     }
 
     private void setContextState(PlayerAction action)

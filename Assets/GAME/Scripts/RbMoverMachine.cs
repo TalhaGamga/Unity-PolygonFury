@@ -108,7 +108,7 @@ public class RbMoverMachine : IMachine
 
         move.OnUpdate.AddListener(() =>
         {
-            setCharacterOrientator();
+            //setCharacterOrientator();
             blendHorizontalVelocity();
             applyRbMovement();
         });
