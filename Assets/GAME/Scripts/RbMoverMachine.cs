@@ -1,4 +1,5 @@
 using DevVorpian;
+using R3;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,7 +21,7 @@ public class RbMoverMachine : IMachine
         _context.PlatformLayer = external.PlatformLayer;
     }
 
-    public void Init()
+    public void Init(Subject<Unit> transitionStream)
     {
         var idle = new ConcreteState("Idle");
         var move = new ConcreteState("Move");
@@ -43,7 +44,7 @@ public class RbMoverMachine : IMachine
         });
 
         _stateMachine = new StateMachine<PlayerAction>();
-        _stateMachine.OnTransitionedAutonomously.AddListener(() => handleInput());
+        _stateMachine.OnTransitionedAutonomously.AddListener(() => transitionStream.OnNext(Unit.Default));
 
         _stateMachine.AddIntentBasedTransition(toMove);
         _stateMachine.AddIntentBasedTransition(toJump);

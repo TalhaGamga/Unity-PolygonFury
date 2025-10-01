@@ -7,6 +7,10 @@ public class Character : MonoBehaviour
     [SerializeField] private MovementSystem _movementSystem;
     [SerializeField] private CombatSystem _combatSystem;
 
+    private InputSnapshot _currentInputSnapshot = InputSnapshot.Empty;
+
+    private CompositeDisposable _disposables = new();
+
     private void Awake()
     {
         if (_inputHandler != null)
@@ -14,8 +18,12 @@ public class Character : MonoBehaviour
             _inputHandler.InputSnapshotStream.Subscribe(snapshot =>
             {
                 dispatchInputsToSystems(snapshot);
-            });
+                _currentInputSnapshot = snapshot;
+            }).AddTo(_disposables);
         }
+
+        _movementSystem.TransitionStream.Subscribe((Unit) => dispatchInputsToSystems(_currentInputSnapshot)).AddTo(_disposables);
+        _combatSystem.TransitionStream.Subscribe((Unit) => dispatchInputsToSystems(_currentInputSnapshot)).AddTo(_disposables);
     }
 
     private void dispatchInputsToSystems(InputSnapshot inputSnapshot)
@@ -35,5 +43,10 @@ public class Character : MonoBehaviour
                     break;
             }
         }
+    }
+
+    private void dispatchInputsToSystems()
+    {
+        dispatchInputsToSystems(_currentInputSnapshot);
     }
 }

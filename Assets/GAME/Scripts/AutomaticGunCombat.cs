@@ -1,16 +1,16 @@
 ﻿using DevVorpian;
-using System.Collections;
+using R3;
 using UnityEngine;
 
 [System.Serializable]
-public class RifleCombat : ICombat
+public class AutomaticGunCombat : MonoBehaviour, ICombat
 {
     private StateMachine<PlayerAction> _stateMachine;
     [SerializeField] private Context _context;
 
     private InputSignal _cachedInputSignal;
 
-    public void Init()
+    public void Init(Subject<Unit> transitionStream)
     {
         var idle = new ConcreteState("Idle");
         var fire = new ConcreteState("Fire");
@@ -23,6 +23,7 @@ public class RifleCombat : ICombat
 
         var fireToReload = new StateTransition<PlayerAction>(fire, reload, PlayerAction.Reload, condition: () => _context.CurrentCharge < 1);
         var reloadToNeutral = new StateTransition<PlayerAction>(reload, neutral, PlayerAction.Neutral, condition: () => _context.IsReloaded, onTransition: () => Debug.Log("ToNeutral"));
+        var neutralToIdle = new StateTransition<PlayerAction>(neutral, idle, PlayerAction.Idle);
 
         _stateMachine = new StateMachine<PlayerAction>();
 
@@ -32,6 +33,9 @@ public class RifleCombat : ICombat
 
         _stateMachine.AddAutonomicTransition(fireToReload);
         _stateMachine.AddAutonomicTransition(reloadToNeutral);
+        _stateMachine.AddAutonomicTransition(neutralToIdle);
+
+        _stateMachine.OnTransitionedAutonomously.AddListener(() => transitionStream.OnNext(Unit.Default));
 
         #region OnEnter
         idle.OnEnter.AddListener(() =>
@@ -80,8 +84,6 @@ public class RifleCombat : ICombat
 
         setCharge(_context.ChargeCapacity);
         resetReloadStateVariables();
-
-        _context.Bullet.OnBulletHit += visualizeHit;
     }
 
     public void Update()
@@ -155,11 +157,9 @@ public class RifleCombat : ICombat
 
         Vector3 direction = toTarget.normalized;
 
-        // base rotation around Z axis (2D aiming)
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion rot = Quaternion.AngleAxis(angle, Vector3.forward);
 
-        // handle flipping: rotate 180° around X axis if aiming left
         if (direction.x < 0)
         {
             rot *= Quaternion.Euler(180f, 0f, 0f);
@@ -189,22 +189,6 @@ public class RifleCombat : ICombat
         setIsReloaded(false);
     }
 
-    private void visualizeHit(BulletHitInfo hitInfo)
-    {
-        _context.CoroutineCaller.StartCoroutine(visualizeHitCor(hitInfo));
-    }
-
-    private IEnumerator visualizeHitCor(BulletHitInfo hitInfo)
-    {
-        _context.LineRenderer.SetPosition(0, hitInfo.Origin);
-        _context.LineRenderer.SetPosition(1, hitInfo.EndPoint);
-        _context.LineRenderer.enabled = true;
-        yield return new WaitForSeconds(0.015f);
-        _context.LineRenderer.enabled = false;
-    }
-
-
-
     [System.Serializable]
     public class Context
     {
@@ -216,15 +200,15 @@ public class RifleCombat : ICombat
         public float ReattackTime;
         public float ReloadTime;
         public float MinAimDistance;
-        public LineRenderer LineRenderer;
-        public MonoBehaviour CoroutineCaller;
-        public Hitscan Bullet;
+        public HitscanBullet Bullet;
 
+        #region Non Predeterministic Variables
         [Header("No predeterministics")]
         public PlayerAction CurrentAction;
         public float LastFireTime;
         public bool IsReloaded;
         public int CurrentCharge;
         public float CurrentReloadProgress;
+        #endregion
     }
 }

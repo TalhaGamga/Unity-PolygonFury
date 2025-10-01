@@ -1,7 +1,10 @@
+using R3;
 using UnityEngine;
 
 public class MovementSystem : MonoBehaviour
 {
+    public Subject<Unit> TransitionStream = new();
+
     private IMachine _mover;
     [SerializeField] private ExternalSources _externalSources;
 
@@ -16,7 +19,7 @@ public class MovementSystem : MonoBehaviour
     {
         _mover?.End();
         _mover = newMover;
-        _mover.Init();
+        _mover.Init(TransitionStream);
     }
 
     public void HandleInput(InputSignal inputType)

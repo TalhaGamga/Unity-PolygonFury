@@ -1721,6 +1721,11 @@ LineRenderer:
   m_CorrespondingSourceObject: {fileID: 7562835007368164681, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
   m_PrefabInstance: {fileID: 1124286941325426481}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1829193549 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4596168595033563641, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+  m_PrefabInstance: {fileID: 1124286941325426481}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1847707410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1821,6 +1826,93 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!1 &1952769562 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8037758149379686732, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+  m_PrefabInstance: {fileID: 1124286941325426481}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1952769563 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3490755472021545564, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+  m_PrefabInstance: {fileID: 1124286941325426481}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1952769564 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2783040800544717146, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+  m_PrefabInstance: {fileID: 1124286941325426481}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952769562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b2d8e82f2c4afb4998605ad4f5b443e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!212 &1952769565 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8417345618208989190, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+  m_PrefabInstance: {fileID: 1124286941325426481}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1952769568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952769562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a882a3f1dac1bb74787ffa4e63fe2260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _context:
+    MousePoint: {x: 0, y: 0}
+    RifleSprite: {fileID: 1952769565}
+    RifleTransform: {fileID: 1952769563}
+    FirePoint: {fileID: 1829193549}
+    ChargeCapacity: 20
+    ReattackTime: 0.1
+    ReloadTime: 1
+    MinAimDistance: 1
+    LineRenderer: {fileID: 1829193548}
+    CoroutineCaller: {fileID: 1952769564}
+    Bullet: {fileID: 0}
+    HitMask:
+      serializedVersion: 2
+      m_Bits: 2048
+    CurrentAction: 0
+    LastFireTime: 0
+    IsReloaded: 0
+    CurrentCharge: 0
+    CurrentReloadProgress: 0
+--- !u!114 &1952769569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952769562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 934d789f1b9f0fa4c9cf6ad1b8079ccc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lineRenderer: {fileID: 0}
+  _hitscanBullet: {fileID: 0}
+--- !u!114 &1952769570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952769562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d157cd88caa29547a9f5271bb25998d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hitMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!4 &1975494638 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4200056432858924575, guid: c335a09be15920144bcc746cb007dd7c, type: 3}
@@ -1841,17 +1933,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5352067541327709468, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
   m_PrefabInstance: {fileID: 1124286941325426481}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2077811964 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6387827668100862417, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
-  m_PrefabInstance: {fileID: 1124286941325426481}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a6f02d7434c79e4fbed88b6fc2f3928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2121238413 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 482721510427772738, guid: dbbea5a6cf6f85240a933298878162d7, type: 3}
@@ -2044,9 +2125,13 @@ PrefabInstance:
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2783040800544717146, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+      propertyPath: _rifleCombatMachine._context.HitMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 2783040800544717146, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
       propertyPath: _rifleCombatMachine._context.CoroutineCaller
       value: 
-      objectReference: {fileID: 2077811964}
+      objectReference: {fileID: 1952769564}
     - target: {fileID: 2783040800544717146, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
       propertyPath: _rifleCombatMachine._context.Bullet.HitMask.m_Bits
       value: 2048
@@ -2170,7 +2255,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8037758149379686732, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1952769568}
+    - targetCorrespondingSourceObject: {fileID: 8037758149379686732, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1952769570}
+    - targetCorrespondingSourceObject: {fileID: 8037758149379686732, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1952769569}
   m_SourcePrefab: {fileID: 100100000, guid: 4a698a8860cef4e4c8eff50a87cd372e, type: 3}
 --- !u!1001 &3496439441853108472
 PrefabInstance:

@@ -1,16 +1,15 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class Hitscan : IBullet
+[RequireComponent(typeof(IBulletVisualizer))]
+public class HitscanBullet : MonoBehaviour, IBullet
 {
-    [SerializeField] public LayerMask HitMask;
-
     public event Action<BulletHitInfo> OnBulletHit;
+    [SerializeField] private LayerMask _hitMask;
 
     public void Fire(Vector3 origin, Vector3 direction, float range)
     {
-        RaycastHit2D hit = Physics2D.Raycast(origin, direction, range, HitMask);
+        RaycastHit2D hit = Physics2D.Raycast(origin, direction, range, _hitMask);
 
         if (hit.collider != null)
         {

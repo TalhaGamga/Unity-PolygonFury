@@ -1,7 +1,9 @@
+using R3;
 using UnityEngine;
 
 public class CombatSystem : MonoBehaviour
 {
+    public Subject<Unit> TransitionStream = new();
     private IMachine _machine;
 
     private void Awake()
@@ -13,7 +15,7 @@ public class CombatSystem : MonoBehaviour
     {
         _machine?.End();
         _machine = newWeapon.CreateCombat(this);
-        _machine?.Init();
+        _machine?.Init(TransitionStream);
     }
 
     public void HandleInput(InputSignal inputSignal)
