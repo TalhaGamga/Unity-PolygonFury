@@ -9,6 +9,8 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
     [SerializeField] private Context _context;
 
     private InputSignal _cachedInputSignal;
+    private Subject<Unit> _transitionStream = new();
+    private CompositeDisposable _disposables = new();
 
     public void Init(Subject<Unit> transitionStream)
     {
@@ -23,7 +25,8 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
 
         var fireToReload = new StateTransition<PlayerAction>(fire, reload, PlayerAction.Reload, condition: () => _context.CurrentCharge < 1);
         var reloadToNeutral = new StateTransition<PlayerAction>(reload, neutral, PlayerAction.Neutral, condition: () => _context.IsReloaded, onTransition: () => Debug.Log("ToNeutral"));
-        var neutralToIdle = new StateTransition<PlayerAction>(neutral, idle, PlayerAction.Idle);
+        var neutralToIdle = new StateTransition<PlayerAction>(neutral, idle, PlayerAction.Idle, () => !_context.IsAttackRequested);
+        var neutralToFire = new StateTransition<PlayerAction>(neutral, fire, PlayerAction.Attack, () => _context.IsAttackRequested);
 
         _stateMachine = new StateMachine<PlayerAction>();
 
@@ -33,9 +36,12 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
 
         _stateMachine.AddAutonomicTransition(fireToReload);
         _stateMachine.AddAutonomicTransition(reloadToNeutral);
+        _stateMachine.AddAutonomicTransition(neutralToFire);
         _stateMachine.AddAutonomicTransition(neutralToIdle);
 
-        _stateMachine.OnTransitionedAutonomously.AddListener(() => transitionStream.OnNext(Unit.Default));
+        _stateMachine.OnTransitionedAutonomously.AddListener(submitAutonomicStateTransition);
+        _transitionStream.Subscribe((Unit) => transitionStream.OnNext(Unit.Default)).AddTo(_disposables);
+
 
         #region OnEnter
         idle.OnEnter.AddListener(() =>
@@ -51,13 +57,13 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         reload.OnEnter.AddListener(() =>
         {
             setIsReloaded(false);
+            playReloadSound();
             setContextState(PlayerAction.Reload);
         });
 
         neutral.OnEnter.AddListener(() =>
         {
             setContextState(PlayerAction.Neutral);
-            handleInput();
         });
         #endregion
 
@@ -94,6 +100,17 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
 
     public void HandleInput(InputSignal inputSignal)
     {
+        switch (inputSignal.Action)
+        {
+            case PlayerAction.Idle:
+                setAttackRequest(false);
+                break;
+            case PlayerAction.Attack:
+                setAttackRequest(true);
+                break;
+            default:
+                break;
+        }
         if (inputSignal.Value != null)
         {
             var mousePoint = (Vector2)inputSignal.Value;
@@ -103,11 +120,6 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         _stateMachine.SetState(inputSignal.Action);
 
         _cachedInputSignal = (inputSignal.Action != PlayerAction.MouseDrag) ? inputSignal : _cachedInputSignal;
-    }
-
-    private void handleInput()
-    {
-        HandleInput(_cachedInputSignal);
     }
 
     private void forceToNeutral()
@@ -189,6 +201,23 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         setIsReloaded(false);
     }
 
+    private void playReloadSound()
+    {
+        SoundManager.Instance.CreateSoundBuilder()
+        .WithRandomPitch(-0.25f, 0.25f)
+        .Play(_context.ReloadSound);
+    }
+
+    private void submitAutonomicStateTransition()
+    {
+        _transitionStream.OnNext(Unit.Default);
+    }
+
+    private void setAttackRequest(bool isAttackRequested)
+    {
+        _context.IsAttackRequested = isAttackRequested;
+    }
+
     [System.Serializable]
     public class Context
     {
@@ -200,7 +229,9 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         public float ReattackTime;
         public float ReloadTime;
         public float MinAimDistance;
+        public bool IsAttackRequested;
         public HitscanBullet Bullet;
+        public SoundData ReloadSound;
 
         #region Non Predeterministic Variables
         [Header("No predeterministics")]

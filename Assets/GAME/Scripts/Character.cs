@@ -22,8 +22,8 @@ public class Character : MonoBehaviour
             }).AddTo(_disposables);
         }
 
-        _movementSystem.TransitionStream.Subscribe((Unit) => dispatchInputsToSystems(_currentInputSnapshot)).AddTo(_disposables);
-        _combatSystem.TransitionStream.Subscribe((Unit) => dispatchInputsToSystems(_currentInputSnapshot)).AddTo(_disposables);
+        _movementSystem.TransitionStream.Subscribe((Unit) => dispatchInputsToSystems()).AddTo(_disposables);
+        _combatSystem.TransitionStream.Subscribe((Unit) => dispatchInputsToSystems()).AddTo(_disposables);
     }
 
     private void dispatchInputsToSystems(InputSnapshot inputSnapshot)
