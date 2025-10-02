@@ -3,7 +3,7 @@ using R3;
 
 public class Character : MonoBehaviour
 {
-    [SerializeField] private PlayerInputHandler _inputHandler;
+    [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private MovementSystem _movementSystem;
     [SerializeField] private CombatSystem _combatSystem;
 
