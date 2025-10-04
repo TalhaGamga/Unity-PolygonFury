@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b3a8ba5da45a44aeea478eb8248d3, type: 3}
+  m_Name: PlayerRbMover
+  m_EditorClassIdentifier: 
+  _mover:
+    _context:
+      CurrentAction: 2
+      Gravity: 66.666664
+      Rb: {fileID: 0}
+      MoveInput: {x: 0, y: 0}
+      MoverTransform: {fileID: 0}
+      OrientationTransform: {fileID: 0}
+      GroundCheckPoints:
+      - {fileID: 0}
+      - {fileID: 0}
+      PlatformLayer:
+        serializedVersion: 2
+        m_Bits: 2048
+      GroundCheckDistance: 0.1
+      HorizontalMovableSpeed: 10
+      HorizontalCurrentVelocity: 0
+      Acceleration: 5
+      DashSpeed: 40
+      LastFaceX: -1
+      VerticalVelocity: 0
+      HorizontalVelocity: 0
+      JumpTimeToPeak: 0.3
+      FaceDeadzone: 0
+      JumpHeight: 3
+      AirborneMovementSpeed: 10
+      IsGrounded: 1
+      HasDashEnded: 0
+      DashDuration: 0.1
+      CurrentDashDuration: 0.1

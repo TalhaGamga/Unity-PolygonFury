@@ -3,22 +3,19 @@ using R3;
 using UnityEngine;
 
 [System.Serializable]
-public class RbMoverMachine : IMachine
+public class RbMover : IMover
 {
     private StateMachine<PlayerAction> _stateMachine;
     [SerializeField] private Context _context;
 
     private InputSignal _cachedInputSignal;
 
-    public RbMoverMachine(MovementSystem.ExternalSources external)
+    public void Construct(MovementSystem.ExternalSources externalSources)
     {
-        _context = new Context();
-
-        _context.MoverTransform = external.MoverTansform;
-        _context.OrientationTransform = external.OrientationTransform;
-        _context.Rb = external.Rb;
-        _context.GroundCheckDistance = external.GroundCheckDistance;
-        _context.PlatformLayer = external.PlatformLayer;
+        _context.Rb = externalSources.Rb;
+        _context.MoverTransform = externalSources.MoverTansform;
+        _context.OrientationTransform = externalSources.OrientationTransform;
+        _context.GroundCheckPoints = externalSources.GroundCheckPoints;
     }
 
     public void Init(Subject<Unit> transitionStream)
@@ -69,7 +66,6 @@ public class RbMoverMachine : IMachine
         {
             setVerticalVelocity(0);
             setHorizontalVelocity(0);
-            applyRbMovement();
             setContextState(PlayerAction.Idle);
         });
 
@@ -105,6 +101,9 @@ public class RbMoverMachine : IMachine
         #region Update
         idle.OnUpdate.AddListener(() =>
         {
+            setCharacterOrientator();
+            blendHorizontalVelocity();
+            applyRbMovement();
         });
 
         move.OnUpdate.AddListener(() =>
@@ -307,33 +306,31 @@ public class RbMoverMachine : IMachine
     private class Context
     {
         public PlayerAction CurrentAction;
-        public float Gravity;
-        public Rigidbody2D Rb;
+        [HideInInspector] public float Gravity;
+        [HideInInspector] public Rigidbody2D Rb;
         public Vector2 MoveInput;
-        public Transform MoverTransform;
-        public Transform OrientationTransform;
-        public Transform[] GroundCheckPoints;
+        [HideInInspector] public Transform MoverTransform;
+        [HideInInspector] public Transform OrientationTransform;
+        [HideInInspector] public Transform[] GroundCheckPoints;
         public LayerMask PlatformLayer;
         public float GroundCheckDistance;
 
         public float HorizontalMovableSpeed;
-        public float HorizontalCurrentVelocity;
+        [HideInInspector] public float HorizontalCurrentVelocity;
         public float Acceleration;
 
         public float DashSpeed;
 
-        public int LastFaceX;
-        public float VerticalVelocity;
-        public float HorizontalVelocity;
+        [HideInInspector] public int LastFaceX;
+        [HideInInspector] public float VerticalVelocity;
+        [HideInInspector] public float HorizontalVelocity;
         public float JumpTimeToPeak;
-        public float FaceDeadzone;
+        [HideInInspector] public float FaceDeadzone;
         public float JumpHeight;
         public float AirborneMovementSpeed;
         public bool IsGrounded;
 
-        public float JumpSpeed;
-
-        public bool HasDashEnded = false;
+        [HideInInspector] public bool HasDashEnded = false;
         public float DashDuration;
         [HideInInspector] public float CurrentDashDuration;
     }

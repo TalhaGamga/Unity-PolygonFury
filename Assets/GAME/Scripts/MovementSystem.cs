@@ -5,17 +5,19 @@ public class MovementSystem : MonoBehaviour
 {
     public Subject<Unit> TransitionStream = new();
 
-    private IMachine _mover;
-    [SerializeField] private ExternalSources _externalSources;
+    private IMover _mover;
 
-    [SerializeField] private RbMoverMachine _moverMachine;
+    [SerializeField] private MoverMachineBaseSO _moverMachineSO;
+    [SerializeField] private ExternalSources _externalSources;
 
     private void Awake()
     {
-        SetMoverMachine(_moverMachine);
+        _mover = _moverMachineSO.GetMover();
+        _mover.Construct(_externalSources);
+        SetMoverMachine(_moverMachineSO.GetMover());
     }
 
-    public void SetMoverMachine(IMachine newMover)
+    public void SetMoverMachine(IMover newMover)
     {
         _mover?.End();
         _mover = newMover;
@@ -39,7 +41,5 @@ public class MovementSystem : MonoBehaviour
         public Transform MoverTansform;
         public Transform OrientationTransform;
         public Transform[] GroundCheckPoints;
-        public float GroundCheckDistance;
-        public LayerMask PlatformLayer;
     }
 }

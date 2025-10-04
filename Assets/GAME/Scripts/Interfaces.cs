@@ -10,6 +10,11 @@ public interface IMachine
     public void HandleInput(InputSignal inputSignal);
 }
 
+public interface IMover : IMachine
+{
+    public void Construct(MovementSystem.ExternalSources externalSources);
+}
+
 public interface ICombat : IMachine
 {
 }
