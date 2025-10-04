@@ -12,7 +12,7 @@ public interface IMachine
 
 public interface IMover : IMachine
 {
-    public void Construct(MovementSystem.ExternalSources externalSources);
+    public void Construct(MovementSystem.Context externalSources);
 }
 
 public interface ICombat : IMachine

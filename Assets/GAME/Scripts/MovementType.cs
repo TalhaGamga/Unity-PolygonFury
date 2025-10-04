@@ -5,9 +5,3 @@ public enum MovementType
     Jump,
     Dash
 }
-
-public enum SystemType
-{
-    Movement,
-    Combat,
-}

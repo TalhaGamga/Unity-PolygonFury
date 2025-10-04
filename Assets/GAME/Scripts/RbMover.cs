@@ -10,7 +10,7 @@ public class RbMover : IMover
 
     private InputSignal _cachedInputSignal;
 
-    public void Construct(MovementSystem.ExternalSources externalSources)
+    public void Construct(MovementSystem.Context externalSources)
     {
         _context.Rb = externalSources.Rb;
         _context.MoverTransform = externalSources.MoverTansform;

@@ -8,7 +8,7 @@ public class MovementSystem : MonoBehaviour
     private IMover _mover;
 
     [SerializeField] private MoverMachineBaseSO _moverMachineSO;
-    [SerializeField] private ExternalSources _externalSources;
+    [SerializeField] private Context _externalSources;
 
     private void Awake()
     {
@@ -35,7 +35,7 @@ public class MovementSystem : MonoBehaviour
     }
 
     [System.Serializable]
-    public class ExternalSources
+    public class Context
     {
         public Rigidbody2D Rb;
         public Transform MoverTansform;
