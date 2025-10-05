@@ -3,9 +3,9 @@ using R3;
 
 public class Character : MonoBehaviour
 {
-    [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private MovementSystem _movementSystem;
     [SerializeField] private CombatSystem _combatSystem;
+    private IInputHandler _inputHandler;
 
     private InputSnapshot _currentInputSnapshot = InputSnapshot.Empty;
 
@@ -13,6 +13,8 @@ public class Character : MonoBehaviour
 
     private void Awake()
     {
+        _inputHandler = GetComponent<IInputHandler>();
+
         if (_inputHandler != null)
         {
             _inputHandler.InputSnapshotStream.Subscribe(snapshot =>

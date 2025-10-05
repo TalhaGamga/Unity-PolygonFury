@@ -2,13 +2,13 @@ using R3;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputHandler : MonoBehaviour
+public class PlayerInputHandler : MonoBehaviour, IInputHandler
 {
     public BehaviorSubject<InputSnapshot> InputSnapshotStream { get; }
         = new BehaviorSubject<InputSnapshot>(InputSnapshot.Empty);
 
-    private readonly Dictionary<PlayerAction, InputSignal> _currentInputs = new();
-    private readonly Dictionary<PlayerAction, InputSignal> _previousInputs = new();
+    private readonly Dictionary<CharacterAction, InputSignal> _currentInputs = new();
+    private readonly Dictionary<CharacterAction, InputSignal> _previousInputs = new();
     private InputSnapshot _lastSnapshot;
 
     [SerializeField] private InputReader _input;
@@ -17,48 +17,48 @@ public class InputHandler : MonoBehaviour
     {
         _input.Move += direction =>
         {
-            HandleInput(SystemType.Movement, PlayerAction.Move, direction.magnitude > 0, direction);
+            HandleInput(SystemType.Movement, CharacterAction.Move, direction.magnitude > 0, direction);
         };
 
         _input.Jump += () =>
         {
-            HandleInput(SystemType.Movement, PlayerAction.Jump);
+            HandleInput(SystemType.Movement, CharacterAction.Jump);
         };
 
         _input.JumpCancel += () =>
         {
-            HandleInput(SystemType.Movement, PlayerAction.JumpCancel);
+            HandleInput(SystemType.Movement, CharacterAction.JumpCancel);
         };
 
         _input.Dash += () =>
         {
-            HandleInput(SystemType.Movement, PlayerAction.Dash);
+            HandleInput(SystemType.Movement, CharacterAction.Dash);
         };
 
         _input.Attack += () =>
         {
-            HandleInput(SystemType.Combat, PlayerAction.Attack);
+            HandleInput(SystemType.Combat, CharacterAction.Attack);
         };
 
         _input.AttackCancel += () =>
         {
-            HandleInput(SystemType.Combat, PlayerAction.Idle);
+            HandleInput(SystemType.Combat, CharacterAction.Idle);
         };
 
         _input.MouseDrag += position =>
         {
-            HandleInput(SystemType.Combat, PlayerAction.MouseDrag, (position.magnitude > 0), position);
+            HandleInput(SystemType.Combat, CharacterAction.Target, (position.magnitude > 0), position);
         };
 
         _input.Reload += () =>
         {
-            HandleInput(SystemType.Combat, PlayerAction.Reload);
+            HandleInput(SystemType.Combat, CharacterAction.Reload);
         };
 
         _input.Enable();
     }
 
-    private void HandleInput(SystemType system, PlayerAction action, bool isHeld = true, object value = default)
+    private void HandleInput(SystemType system, CharacterAction action, bool isHeld = true, object value = default)
     {
         var behavior = InputBehaviorMap.Behavior.TryGetValue(action, out var b) ? b : InputBehavior.Eventful;
 
@@ -92,7 +92,7 @@ public class InputHandler : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator RemoveEventfulInputNextFrame(PlayerAction action)
+    private System.Collections.IEnumerator RemoveEventfulInputNextFrame(CharacterAction action)
     {
         yield return null;
 
@@ -101,7 +101,7 @@ public class InputHandler : MonoBehaviour
 
         var newSnapshot = new InputSnapshot
         {
-            CurrentInputs = new Dictionary<PlayerAction, InputSignal>(_currentInputs),
+            CurrentInputs = new Dictionary<CharacterAction, InputSignal>(_currentInputs),
             TimeStamp = Time.time
         };
 
@@ -113,7 +113,7 @@ public class InputHandler : MonoBehaviour
     }
 
 
-    private void UpdateInput(PlayerAction action, InputSignal newInput)
+    private void UpdateInput(CharacterAction action, InputSignal newInput)
     {
         _previousInputs[action] = _currentInputs.TryGetValue(action, out var prev) ? prev : default;
 
@@ -125,7 +125,7 @@ public class InputHandler : MonoBehaviour
 
             var newSnapshot = new InputSnapshot
             {
-                CurrentInputs = new Dictionary<PlayerAction, InputSignal>(_currentInputs),
+                CurrentInputs = new Dictionary<CharacterAction, InputSignal>(_currentInputs),
                 TimeStamp = Time.time
             };
 

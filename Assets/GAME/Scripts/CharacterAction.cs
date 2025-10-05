@@ -1,4 +1,4 @@
-public enum PlayerAction
+public enum CharacterAction
 {
     None,
     Neutral,
@@ -11,6 +11,6 @@ public enum PlayerAction
     //
     Attack,
     Reload,
-    MouseDrag
+    Target
     // Extend as needed 
 }

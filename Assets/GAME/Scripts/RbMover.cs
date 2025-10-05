@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class RbMover : IMover
 {
-    private StateMachine<PlayerAction> _stateMachine;
+    private StateMachine<CharacterAction> _stateMachine;
     [SerializeField] private Context _context;
 
     private InputSignal _cachedInputSignal;
@@ -27,20 +27,20 @@ public class RbMover : IMover
         var dash = new ConcreteState("Dash");
         var neutral = new ConcreteState("Neutral"); // to be used
 
-        var toIdle = new StateTransition<PlayerAction>(null, idle, PlayerAction.Idle, () => _context.MoveInput.magnitude == 0 && _context.IsGrounded && _context.CurrentAction != PlayerAction.Jump && _context.CurrentAction != PlayerAction.Dash);
-        var toMove = new StateTransition<PlayerAction>(null, move, PlayerAction.Move, () => _context.MoveInput.magnitude > 0 && _context.IsGrounded && _context.CurrentAction != PlayerAction.Jump && _context.CurrentAction != PlayerAction.Dash);
-        var toJump = new StateTransition<PlayerAction>(null, jump, PlayerAction.Jump, () => _context.IsGrounded);
-        var toDash = new StateTransition<PlayerAction>(null, dash, PlayerAction.Dash, () => true);
-        var toFall = new StateTransition<PlayerAction>(null, fall, PlayerAction.Fall, () => !_context.IsGrounded && (_context.CurrentAction != PlayerAction.Dash) && _context.VerticalVelocity <= 0);
-        var fallToNeutral = new StateTransition<PlayerAction>(fall, neutral, PlayerAction.Neutral, () => _context.IsGrounded);
-        var dashToNeutral = new StateTransition<PlayerAction>(dash, neutral, PlayerAction.Neutral, () => _context.HasDashEnded);
+        var toIdle = new StateTransition<CharacterAction>(null, idle, CharacterAction.Idle, () => _context.MoveInput.magnitude == 0 && _context.IsGrounded && _context.CurrentAction != CharacterAction.Jump && _context.CurrentAction != CharacterAction.Dash);
+        var toMove = new StateTransition<CharacterAction>(null, move, CharacterAction.Move, () => _context.MoveInput.magnitude > 0 && _context.IsGrounded && _context.CurrentAction != CharacterAction.Jump && _context.CurrentAction != CharacterAction.Dash);
+        var toJump = new StateTransition<CharacterAction>(null, jump, CharacterAction.Jump, () => _context.IsGrounded);
+        var toDash = new StateTransition<CharacterAction>(null, dash, CharacterAction.Dash, () => true);
+        var toFall = new StateTransition<CharacterAction>(null, fall, CharacterAction.Fall, () => !_context.IsGrounded && (_context.CurrentAction != CharacterAction.Dash) && _context.VerticalVelocity <= 0);
+        var fallToNeutral = new StateTransition<CharacterAction>(fall, neutral, CharacterAction.Neutral, () => _context.IsGrounded);
+        var dashToNeutral = new StateTransition<CharacterAction>(dash, neutral, CharacterAction.Neutral, () => _context.HasDashEnded);
 
-        var jumpToFallWithJumpCancel = new StateTransition<PlayerAction>(jump, fall, PlayerAction.JumpCancel, onTransition: () =>
+        var jumpToFallWithJumpCancel = new StateTransition<CharacterAction>(jump, fall, CharacterAction.JumpCancel, onTransition: () =>
         {
             debuffJumpingRise();
         });
 
-        _stateMachine = new StateMachine<PlayerAction>();
+        _stateMachine = new StateMachine<CharacterAction>();
         _stateMachine.OnTransitionedAutonomously.AddListener(() => transitionStream.OnNext(Unit.Default));
 
         _stateMachine.AddIntentBasedTransition(toMove);
@@ -57,7 +57,7 @@ public class RbMover : IMover
         move.OnEnter.AddListener(() =>
         {
             setVerticalVelocity(0);
-            setContextState(PlayerAction.Move);
+            setContextState(CharacterAction.Move);
             setHorizontalVelocity(_context.HorizontalMovableSpeed);
             constraintRbAxisY(true);
         });
@@ -66,12 +66,12 @@ public class RbMover : IMover
         {
             setVerticalVelocity(0);
             setHorizontalVelocity(0);
-            setContextState(PlayerAction.Idle);
+            setContextState(CharacterAction.Idle);
         });
 
         jump.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Jump);
+            setContextState(CharacterAction.Jump);
             constraintRbAxisY(false);
             setVerticalVelocity(calculateJumpVelocity());
             setHorizontalVelocity(_context.AirborneMovementSpeed);
@@ -79,19 +79,19 @@ public class RbMover : IMover
 
         fall.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Fall);
+            setContextState(CharacterAction.Fall);
             constraintRbAxisY(false);
             setHorizontalVelocity(_context.AirborneMovementSpeed);
         });
 
         neutral.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Neutral);
+            setContextState(CharacterAction.Neutral);
         });
 
         dash.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Dash);
+            setContextState(CharacterAction.Dash);
             constraintRbAxisY(true);
             resetDash();
             dashing();
@@ -142,7 +142,7 @@ public class RbMover : IMover
         });
         #endregion
 
-        _stateMachine.SetState(PlayerAction.Idle);
+        _stateMachine.SetState(CharacterAction.Idle);
 
         setContextGravity();
     }
@@ -171,7 +171,7 @@ public class RbMover : IMover
         HandleInput(_cachedInputSignal);
     }
 
-    private void setContextState(PlayerAction actionType)
+    private void setContextState(CharacterAction actionType)
     {
         _context.CurrentAction = actionType;
     }
@@ -305,7 +305,7 @@ public class RbMover : IMover
     [System.Serializable]
     private class Context
     {
-        public PlayerAction CurrentAction;
+        public CharacterAction CurrentAction;
         [HideInInspector] public float Gravity;
         [HideInInspector] public Rigidbody2D Rb;
         public Vector2 MoveInput;

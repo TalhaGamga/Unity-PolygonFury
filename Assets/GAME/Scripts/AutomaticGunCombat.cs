@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class AutomaticGunCombat : MonoBehaviour, ICombat
 {
-    private StateMachine<PlayerAction> _stateMachine;
+    private StateMachine<CharacterAction> _stateMachine;
     [SerializeField] private Context _context;
 
     private InputSignal _cachedInputSignal;
@@ -19,16 +19,16 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         var reload = new ConcreteState("Reload");
         var neutral = new ConcreteState("Neutral");
 
-        var toIdle = new StateTransition<PlayerAction>(null, idle, PlayerAction.Idle, condition: () => _context.CurrentAction != PlayerAction.Reload);
-        var toFire = new StateTransition<PlayerAction>(null, fire, PlayerAction.Attack, condition: () => _context.CurrentCharge > 0 && _context.CurrentAction != PlayerAction.Reload);
-        var toReload = new StateTransition<PlayerAction>(null, reload, PlayerAction.Reload, condition: () => _context.CurrentCharge < _context.ChargeCapacity && _context.CurrentAction != PlayerAction.Reload, onTransition: () => Debug.Log("To Reload"));
+        var toIdle = new StateTransition<CharacterAction>(null, idle, CharacterAction.Idle, condition: () => _context.CurrentAction != CharacterAction.Reload);
+        var toFire = new StateTransition<CharacterAction>(null, fire, CharacterAction.Attack, condition: () => _context.CurrentCharge > 0 && _context.CurrentAction != CharacterAction.Reload);
+        var toReload = new StateTransition<CharacterAction>(null, reload, CharacterAction.Reload, condition: () => _context.CurrentCharge < _context.ChargeCapacity && _context.CurrentAction != CharacterAction.Reload, onTransition: () => Debug.Log("To Reload"));
 
-        var fireToReload = new StateTransition<PlayerAction>(fire, reload, PlayerAction.Reload, condition: () => _context.CurrentCharge < 1);
-        var reloadToNeutral = new StateTransition<PlayerAction>(reload, neutral, PlayerAction.Neutral, condition: () => _context.IsReloaded, onTransition: () => Debug.Log("ToNeutral"));
-        var neutralToIdle = new StateTransition<PlayerAction>(neutral, idle, PlayerAction.Idle, () => !_context.IsAttackRequested);
-        var neutralToFire = new StateTransition<PlayerAction>(neutral, fire, PlayerAction.Attack, () => _context.IsAttackRequested);
+        var fireToReload = new StateTransition<CharacterAction>(fire, reload, CharacterAction.Reload, condition: () => _context.CurrentCharge < 1);
+        var reloadToNeutral = new StateTransition<CharacterAction>(reload, neutral, CharacterAction.Neutral, condition: () => _context.IsReloaded, onTransition: () => Debug.Log("ToNeutral"));
+        var neutralToIdle = new StateTransition<CharacterAction>(neutral, idle, CharacterAction.Idle, () => !_context.IsAttackRequested);
+        var neutralToFire = new StateTransition<CharacterAction>(neutral, fire, CharacterAction.Attack, () => _context.IsAttackRequested);
 
-        _stateMachine = new StateMachine<PlayerAction>();
+        _stateMachine = new StateMachine<CharacterAction>();
 
         _stateMachine.AddIntentBasedTransition(toFire);
         _stateMachine.AddIntentBasedTransition(toIdle);
@@ -46,24 +46,24 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         #region OnEnter
         idle.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Idle);
+            setContextState(CharacterAction.Idle);
         });
 
         fire.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Attack);
+            setContextState(CharacterAction.Attack);
         });
 
         reload.OnEnter.AddListener(() =>
         {
             setIsReloaded(false);
             playReloadSound();
-            setContextState(PlayerAction.Reload);
+            setContextState(CharacterAction.Reload);
         });
 
         neutral.OnEnter.AddListener(() =>
         {
-            setContextState(PlayerAction.Neutral);
+            setContextState(CharacterAction.Neutral);
         });
         #endregion
 
@@ -86,7 +86,7 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         });
         #endregion
 
-        _stateMachine.SetState(PlayerAction.Idle);
+        _stateMachine.SetState(CharacterAction.Idle);
 
         setCharge(_context.ChargeCapacity);
         resetReloadStateVariables();
@@ -102,10 +102,10 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
     {
         switch (inputSignal.Action)
         {
-            case PlayerAction.Idle:
+            case CharacterAction.Idle:
                 setAttackRequest(false);
                 break;
-            case PlayerAction.Attack:
+            case CharacterAction.Attack:
                 setAttackRequest(true);
                 break;
             default:
@@ -119,12 +119,12 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
 
         _stateMachine.SetState(inputSignal.Action);
 
-        _cachedInputSignal = (inputSignal.Action != PlayerAction.MouseDrag) ? inputSignal : _cachedInputSignal;
+        _cachedInputSignal = (inputSignal.Action != CharacterAction.Target) ? inputSignal : _cachedInputSignal;
     }
 
     private void forceToNeutral()
     {
-        _stateMachine.SetState(PlayerAction.Neutral);
+        _stateMachine.SetState(CharacterAction.Neutral);
     }
 
     public void End()
@@ -148,7 +148,7 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         _context.CurrentCharge--;
     }
 
-    private void setContextState(PlayerAction action)
+    private void setContextState(CharacterAction action)
     {
         _context.CurrentAction = action;
     }
@@ -235,7 +235,7 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
 
         #region Non Predeterministic Variables
         [Header("No predeterministics")]
-        public PlayerAction CurrentAction;
+        public CharacterAction CurrentAction;
         public float LastFireTime;
         public bool IsReloaded;
         public int CurrentCharge;

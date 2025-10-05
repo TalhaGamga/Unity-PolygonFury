@@ -34,3 +34,8 @@ public interface IBulletVisualizer
 {
     IBullet Bullet { get; }
 }
+
+public interface IInputHandler
+{
+    public BehaviorSubject<InputSnapshot> InputSnapshotStream { get; }
+}

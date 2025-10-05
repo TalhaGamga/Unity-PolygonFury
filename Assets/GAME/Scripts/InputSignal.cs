@@ -2,7 +2,7 @@ using UnityEngine;
 public struct InputSignal
 {
     public SystemType System;
-    public PlayerAction Action;
+    public CharacterAction Action;
     public bool IsHeld;
     public bool WasPresseedThisFrame;
     public bool WasReleasedThisFrame;
