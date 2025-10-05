@@ -1,4 +1,5 @@
-using DevVorpian;
+﻿using DevVorpian;
+using DG.Tweening;
 using R3;
 using UnityEngine;
 
@@ -31,9 +32,8 @@ namespace TriangleSpearlingBoss
 
             _stateMachine.OnTransitionedAutonomously.AddListener(() => transitionStream.OnNext(Unit.Default));
 
-            _stateMachine.AddIntentBasedTransition(toIdle);
             _stateMachine.AddIntentBasedTransition(toMove);
-
+            _stateMachine.AddAutonomicTransition(toIdle);
 
             #region OnEnter
             idle.OnEnter.AddListener(() =>
@@ -61,13 +61,18 @@ namespace TriangleSpearlingBoss
             {
                 setCharacterOrientator();
                 blendHorizontalVelocity();
+                applyRbMovement();
             });
             #endregion
 
             #region OnExit
+            move.OnExit.AddListener(() =>
+            {
+            });
             #endregion
 
             _stateMachine.SetState(CharacterAction.Idle);
+            tweeModelUpAndDown();
         }
 
         public void HandleInput(InputSignal inputSignal)
@@ -124,6 +129,40 @@ namespace TriangleSpearlingBoss
             _context.Rb.linearVelocity = new Vector2(_context.HorizontalCurrentVelocity, 0);
         }
 
+        private void tweeModelUpAndDown()
+        {
+            var t = _context.OrientationTransform;
+
+            float startY = t.localPosition.y;
+
+            float topY = _context.InitialHeight + _context.UpDownDistance;
+            float bottomY = topY - _context.UpDownDistance * 0.333f;
+
+            t.DOLocalMoveY(topY, _context.UpDownDuration)
+                .SetEase(Ease.OutSine)
+                .OnComplete(() =>
+                {
+                    t.DOLocalMoveY(bottomY, _context.UpDownDuration / 2)
+                        .SetEase(Ease.InOutSine)
+                        .SetLoops(-1, LoopType.Yoyo);
+                });
+        }
+
+        private void killTweenOnModel()
+        {
+            _context.OrientationTransform.DOKill();
+        }
+
+        private void tweenModelToInitial()
+        {
+            var t = _context.OrientationTransform;
+
+            Vector3 startPos = t.localPosition;
+
+            t.DOLocalMoveY(0, _context.UpDownDuration)
+                .SetEase(Ease.InOutSine);
+        }
+
         public void End()
         {
         }
@@ -173,7 +212,7 @@ namespace TriangleSpearlingBoss
             [HideInInspector] public Transform OrientationTransform;
             [HideInInspector] public Transform[] GroundCheckPoints;
             [HideInInspector] public float HorizontalTargetVelocity;
-            [HideInInspector] public float HorizontalCurrentVelocity;
+            public float HorizontalCurrentVelocity;
             [HideInInspector] public int LastFaceX;
             [HideInInspector] public bool IsGrounded;
 
@@ -183,6 +222,9 @@ namespace TriangleSpearlingBoss
             public LayerMask PlatformLayer;
             public float GroundCheckDistance;
             public float FaceDeadzone;
+            public float InitialHeight;
+            public float UpDownDistance;
+            public float UpDownDuration;
         }
     }
 }

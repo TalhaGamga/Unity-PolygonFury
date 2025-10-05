@@ -12,3 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e061d3bc35ea3d47959af067e8bb83a, type: 3}
   m_Name: TriangleSpearingMover
   m_EditorClassIdentifier: 
+  _mover:
+    _context:
+      CurrentAction: 2
+      Rb: {fileID: 0}
+      MoverTransform: {fileID: 0}
+      OrientationTransform: {fileID: 0}
+      GroundCheckPoints:
+      - {fileID: 0}
+      - {fileID: 0}
+      HorizontalTargetVelocity: 10
+      HorizontalCurrentVelocity: 0
+      LastFaceX: -1
+      IsGrounded: 1
+      HorizontalMaxSpeed: 10
+      Acceleration: 5
+      MoveInput: {x: 0, y: 0}
+      PlatformLayer:
+        serializedVersion: 2
+        m_Bits: 2048
+      GroundCheckDistance: 0.1
+      FaceDeadzone: 0
+      InitialHeight: 0.5
+      UpDownDistance: 0.5
+      UpDownDuration: 1
