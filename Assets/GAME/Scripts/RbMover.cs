@@ -56,8 +56,8 @@ public class RbMover : IMover
         #region OnEnter
         move.OnEnter.AddListener(() =>
         {
-            setVerticalVelocity(0);
             setContextState(CharacterAction.Move);
+            setVerticalVelocity(0);
             setHorizontalVelocity(_context.HorizontalMovableSpeed);
             constraintRbAxisY(true);
         });
@@ -163,12 +163,6 @@ public class RbMover : IMover
         var dir = inputSignal.Value;
         _context.MoveInput = dir != null ? (Vector2)dir : Vector2.zero;
         _stateMachine.SetState(inputSignal.Action);
-        _cachedInputSignal = inputSignal;
-    }
-
-    private void handleInput()
-    {
-        HandleInput(_cachedInputSignal);
     }
 
     private void setContextState(CharacterAction actionType)
@@ -325,7 +319,7 @@ public class RbMover : IMover
         [HideInInspector] public float VerticalVelocity;
         [HideInInspector] public float HorizontalVelocity;
         public float JumpTimeToPeak;
-        [HideInInspector] public float FaceDeadzone;
+        public float FaceDeadzone;
         public float JumpHeight;
         public float AirborneMovementSpeed;
         public bool IsGrounded;
