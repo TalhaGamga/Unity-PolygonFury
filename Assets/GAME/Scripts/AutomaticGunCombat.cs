@@ -8,8 +8,6 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
     private StateMachine<CharacterAction> _stateMachine;
     [SerializeField] private Context _context;
 
-    private InputSignal _cachedInputSignal;
-    private Subject<Unit> _transitionStream = new();
     private CompositeDisposable _disposables = new();
 
     public void Init(Subject<Unit> transitionStream)
@@ -39,9 +37,7 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         _stateMachine.AddAutonomicTransition(neutralToFire);
         _stateMachine.AddAutonomicTransition(neutralToIdle);
 
-        _stateMachine.OnTransitionedAutonomously.AddListener(submitAutonomicStateTransition);
-        _transitionStream.Subscribe((Unit) => transitionStream.OnNext(Unit.Default)).AddTo(_disposables);
-
+        _stateMachine.OnTransitionedAutonomously.AddListener(() => transitionStream.OnNext(Unit.Default));
 
         #region OnEnter
         idle.OnEnter.AddListener(() =>
@@ -118,8 +114,6 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         }
 
         _stateMachine.SetState(inputSignal.Action);
-
-        _cachedInputSignal = (inputSignal.Action != CharacterAction.Target) ? inputSignal : _cachedInputSignal;
     }
 
     private void forceToNeutral()
@@ -206,11 +200,6 @@ public class AutomaticGunCombat : MonoBehaviour, ICombat
         SoundManager.Instance.CreateSoundBuilder()
         .WithRandomPitch(-0.25f, 0.25f)
         .Play(_context.ReloadSound);
-    }
-
-    private void submitAutonomicStateTransition()
-    {
-        _transitionStream.OnNext(Unit.Default);
     }
 
     private void setAttackRequest(bool isAttackRequested)
