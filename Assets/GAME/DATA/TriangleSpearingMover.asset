@@ -33,6 +33,6 @@ MonoBehaviour:
         m_Bits: 2048
       GroundCheckDistance: 0.1
       FaceDeadzone: 0
-      InitialHeight: 0.5
+      InitialHeight: 1
       UpDownDistance: 0.5
       UpDownDuration: 1

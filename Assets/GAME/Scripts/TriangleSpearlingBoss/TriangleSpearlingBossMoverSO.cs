@@ -5,7 +5,7 @@ namespace TriangleSpearlingBoss
     [CreateAssetMenu(menuName = "ScriptableObjects/Movers/TriangleSpearlingBossMover")]
     public class TriangleSpearlingBossMoverSO : MoverMachineBaseSO
     {
-        [SerializeField] private BossMover _mover;
+        [SerializeField] private TriangleSpearlingBossMover _mover;
         protected override IMover Mover => _mover;
     }
 }

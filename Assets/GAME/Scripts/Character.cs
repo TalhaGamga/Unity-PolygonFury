@@ -37,7 +37,7 @@ public class Character : MonoBehaviour
                 case SystemType.Movement:
                     _movementSystem?.HandleInput(inputSignal);
                     break;
-
+ 
                 case SystemType.Combat:
                     _combatSystem?.HandleInput(inputSignal);
                     break;

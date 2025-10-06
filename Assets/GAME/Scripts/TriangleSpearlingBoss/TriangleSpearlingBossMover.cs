@@ -7,7 +7,7 @@ namespace TriangleSpearlingBoss
 {
 
     [System.Serializable]
-    public class BossMover : IMover
+    public class TriangleSpearlingBossMover : IMover
     {
         private StateMachine<CharacterAction> _stateMachine;
         [SerializeField] private Context _context;
@@ -214,7 +214,7 @@ namespace TriangleSpearlingBoss
             [HideInInspector] public float HorizontalTargetVelocity;
             public float HorizontalCurrentVelocity;
             [HideInInspector] public int LastFaceX;
-            [HideInInspector] public bool IsGrounded;
+            public bool IsGrounded;
 
             public float HorizontalMaxSpeed;
             public float Acceleration;
