@@ -28,6 +28,8 @@ public class SpearCombat : MonoBehaviour, ICombat
         _stateMachine.AddNormalTransitionTrigger(ref _context.SpearThrownAction, toNeutral);
         _stateMachine.AddNormalTransitionTrigger(ref _context.ReloadAction, neutralToIdle);
 
+        saveSpearTransorm();
+
         idle.OnEnter.AddListener(() =>
         {
             resetSpear();
@@ -47,7 +49,7 @@ public class SpearCombat : MonoBehaviour, ICombat
 
         _stateMachine.SetState(CharacterAction.Idle);
 
-        saveSpearTransorm();
+        Physics2D.IgnoreCollision(_context.CharacterTransform.GetComponent<Collider2D>(), _context.SpearTransform.GetComponent<Collider2D>(), true);
     }
 
     public void HandleInput(InputSignal inputSignal)
@@ -96,6 +98,8 @@ public class SpearCombat : MonoBehaviour, ICombat
             .SetEase(Ease.InOutExpo);
         _context.Rb.simulated = false;
         constraintRb(true);
+        _context.IsStabbed = false;
+        _context.Rb.bodyType = RigidbodyType2D.Dynamic;
     }
 
     private void saveSpearTransorm()
@@ -119,9 +123,9 @@ public class SpearCombat : MonoBehaviour, ICombat
                  constraintRb(false);
                  _context.Rb.simulated = true;
                  _context.SpearTransform.SetParent(null);
-                 rb.isKinematic = false;
                  rb.linearVelocity = Vector2.zero;
                  rb.AddForce(dir * _context.SpearThrowForce, ForceMode2D.Impulse);
+                 _context.SpearThrownAction?.Invoke();
              });
     }
 
@@ -138,7 +142,6 @@ public class SpearCombat : MonoBehaviour, ICombat
              .OnComplete(() =>
              {
                  throwSpear(targetPoint);
-                 _context.SpearThrownAction?.Invoke();
              });
     }
 
@@ -160,6 +163,33 @@ public class SpearCombat : MonoBehaviour, ICombat
         _context.CurrentAction = newAction;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (_context.IsStabbed) return;
+
+        if (((1 << collision.gameObject.layer) & _context.TargetLayer) != 0)
+        {
+            _context.IsStabbed = true;
+
+            _context.Rb.linearVelocity = Vector2.zero;
+            _context.Rb.angularVelocity = 0;
+
+            _context.Rb.bodyType = RigidbodyType2D.Kinematic;
+
+            var spear = _context.SpearTransform;
+            Vector3 embedDir = spear.right * _context.EmbedDistance;
+
+            spear.DOMove(spear.position + embedDir, _context.EmbedDuration)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                {
+                    _context.SpearTransform.DOShakePosition(_context.ShakeDuration, _context.ShakeStrength, vibrato: 8, randomness: 45f, snapping: false, fadeOut: true);
+                });
+        }
+    }
+
+
+
     [System.Serializable]
     public class Context
     {
@@ -176,6 +206,12 @@ public class SpearCombat : MonoBehaviour, ICombat
         public float SpearPullDistance;
         public float SpearPullDuration;
         public float SpearThrowForce;
+
+        public float EmbedDistance = .1f;
+        public float EmbedDuration = .05f;
+        public float ShakeStrength = .1f;
+        public float ShakeDuration = .15f;
+        public bool IsStabbed = false;
 
         [HideInInspector] public Vector3 InitialPosition;
         [HideInInspector] public Vector3 TargetPoint;
