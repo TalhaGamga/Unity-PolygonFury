@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine.Events;
+using UnityEngine;
 
 namespace DevVorpian
 {
@@ -47,6 +48,41 @@ namespace DevVorpian
             }
 
             setState(transitionData);
+        }
+
+        public void AddAnyTransitionTrigger(ref Action action, StateTransition<StateType> transition)
+        {
+            action += () =>
+            {
+                if (transition.Condition != null && !transition.Condition())
+                {
+                    return;
+                }
+
+                if (!_currentState.Equals(transition.To))
+                {
+                    var transitionData = new StateTransitionData(transition.To, transition.OnTransition);
+                    setState(transitionData);
+                }
+            };
+        }
+
+        public void AddNormalTransitionTrigger(ref Action action, StateTransition<StateType> transition)
+        {
+            action += () =>
+            {
+                Debug.Log("Normal Transition Triggered: " + transition.TargetStateType);
+                if (transition.Condition != null && !transition.Condition())
+                {
+                    return;
+                }
+
+                if (_currentState.Equals(transition.From) && !_currentState.Equals(transition.To))
+                {
+                    var transitionData = new StateTransitionData(transition.To, transition.OnTransition);
+                    setState(transitionData);
+                }
+            };
         }
 
         private void setStateAutonomous(StateTransitionData transitionData)

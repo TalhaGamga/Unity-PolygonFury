@@ -9,6 +9,7 @@ public enum CharacterAction
     Fall,
     Dash,
     //
+    Prepare,
     Attack,
     Reload,
     Target
