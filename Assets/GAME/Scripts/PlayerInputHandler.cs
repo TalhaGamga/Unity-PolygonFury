@@ -11,51 +11,53 @@ public class PlayerInputHandler : MonoBehaviour, IInputHandler
     private readonly Dictionary<CharacterAction, InputSignal> _previousInputs = new();
     private InputSnapshot _lastSnapshot;
 
-    [SerializeField] private InputReader _input;
+    [SerializeField] private SquareInputReaderSO _inputReaderSO;
 
     private void Start()
     {
-        _input.Move += direction =>
+        var input = _inputReaderSO.GetInputReader();
+
+        input.Move += direction =>
         {
             HandleInput(SystemType.Movement, CharacterAction.Move, direction.magnitude > 0, direction);
         };
 
-        _input.Jump += () =>
+        input.Jump += () =>
         {
             HandleInput(SystemType.Movement, CharacterAction.Jump);
         };
 
-        _input.JumpCancel += () =>
+        input.JumpCancel += () =>
         {
             HandleInput(SystemType.Movement, CharacterAction.JumpCancel);
         };
 
-        _input.Dash += () =>
+        input.Dash += () =>
         {
             HandleInput(SystemType.Movement, CharacterAction.Dash);
         };
 
-        _input.Attack += () =>
+        input.Attack += () =>
         {
             HandleInput(SystemType.Combat, CharacterAction.Attack);
         };
 
-        _input.AttackCancel += () =>
+        input.AttackCancel += () =>
         {
             HandleInput(SystemType.Combat, CharacterAction.Idle);
         };
 
-        _input.MouseDrag += position =>
+        input.MouseDrag += position =>
         {
             HandleInput(SystemType.Combat, CharacterAction.Target, (position.magnitude > 0), position);
         };
 
-        _input.Reload += () =>
+        input.Reload += () =>
         {
             HandleInput(SystemType.Combat, CharacterAction.Reload);
         };
 
-        _input.Enable();
+        input.Enable();
     }
 
     private void HandleInput(SystemType system, CharacterAction action, bool isHeld = true, object value = default)

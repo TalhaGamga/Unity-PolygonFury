@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e061d3bc35ea3d47959af067e8bb83a, type: 3}
-  m_Name: TriangleSpearingMover
+  m_Script: {fileID: 11500000, guid: 5e2b3498efb098241b7d4b106642641e, type: 3}
+  m_Name: TriangleBossMover
   m_EditorClassIdentifier: 
   _mover:
     _context:
@@ -23,7 +23,7 @@ MonoBehaviour:
       - {fileID: 0}
       HorizontalTargetVelocity: 10
       HorizontalCurrentVelocity: 0
-      LastFaceX: -1
+      LastFaceX: 1
       IsGrounded: 1
       HorizontalMaxSpeed: 10
       Acceleration: 5

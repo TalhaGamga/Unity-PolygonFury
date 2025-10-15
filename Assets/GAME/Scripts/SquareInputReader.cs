@@ -5,12 +5,10 @@ using static PlayerInputs;
 
 public interface IInputReader
 {
-    public Vector2 Direction { get; }
     void Enable();
 }
 
-[CreateAssetMenu(menuName = "ScriptableObjects/InputReader")]
-public class InputReader : ScriptableObject, IPlayerActions, IInputReader
+public class SquareInputReader : InputReaderBase, IPlayerActions
 {
     public event UnityAction<Vector2> Move = delegate { };
     public event UnityAction Jump = delegate { };
@@ -26,7 +24,7 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputReader
 
     private PlayerInputs _playerInputs;
 
-    public void Enable()
+    public override void Enable()
     {
         if (_playerInputs == null)
         {

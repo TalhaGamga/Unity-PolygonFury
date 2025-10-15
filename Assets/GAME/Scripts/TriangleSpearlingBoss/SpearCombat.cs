@@ -61,6 +61,9 @@ public class SpearCombat : MonoBehaviour, ICombat
             case CharacterAction.Attack:
                 _stateMachine.SetState(inputSignal.Action);
                 break;
+            case CharacterAction.Reload:
+                _context.ReloadAction?.Invoke();
+                break;
             default:
                 break;
         }
@@ -69,17 +72,6 @@ public class SpearCombat : MonoBehaviour, ICombat
     public void Update()
     {
         _stateMachine?.Update();
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            //resetSpear();
-            _context.ReloadAction?.Invoke();
-        }
-
-        //if (Input.GetKeyDown(KeyCode.Mouse0))
-        //{
-        //    setSpearAim(setMousePoint(Input.mousePosition));
-        //}
     }
 
     public void End()
