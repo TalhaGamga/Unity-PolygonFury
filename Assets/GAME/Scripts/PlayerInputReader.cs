@@ -8,7 +8,7 @@ public interface IInputReader
     void Enable();
 }
 
-public class SquareInputReader : InputReaderBase, IPlayerActions
+public class PlayerInputReader : InputReaderBase, IPlayerActions
 {
     public event UnityAction<Vector2> Move = delegate { };
     public event UnityAction Jump = delegate { };

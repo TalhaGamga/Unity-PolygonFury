@@ -5,9 +5,8 @@ using UnityEngine;
 
 namespace TriangleSpearlingBoss
 {
-
     [System.Serializable]
-    public class TriangleSpearlingBossMover : IMover
+    public class TriangleSpearlingBossInputDrivenMover : IMover
     {
         private StateMachine<CharacterAction> _stateMachine;
         [SerializeField] private Context _context;
@@ -99,6 +98,7 @@ namespace TriangleSpearlingBoss
                 ? RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionY
                 : RigidbodyConstraints2D.FreezeRotation;
         }
+
         private void setCharacterOrientator()
         {
             float x = _context.MoveInput.x;
@@ -177,7 +177,7 @@ namespace TriangleSpearlingBoss
         {
             foreach (var checkPoint in _context.GroundCheckPoints)
             {
-                DrawDebugCircle(checkPoint.position, _context.GroundCheckDistance, Color.green);
+                drawDebugCircle(checkPoint.position, _context.GroundCheckDistance, Color.green);
 
                 if (Physics2D.OverlapCircle(checkPoint.position, _context.GroundCheckDistance, _context.PlatformLayer))
                 {
@@ -188,7 +188,7 @@ namespace TriangleSpearlingBoss
             return false;
         }
 
-        private void DrawDebugCircle(Vector3 center, float radius, Color color, int segments = 20)
+        private void drawDebugCircle(Vector3 center, float radius, Color color, int segments = 20)
         {
             float angleStep = 360f / segments;
             Vector3 prevPoint = center + new Vector3(Mathf.Cos(0f), Mathf.Sin(0f)) * radius;

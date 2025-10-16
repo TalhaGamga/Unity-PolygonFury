@@ -49,7 +49,10 @@ public class SpearCombat : MonoBehaviour, ICombat
 
         _stateMachine.SetState(CharacterAction.Idle);
 
-        Physics2D.IgnoreCollision(_context.CharacterTransform.GetComponent<Collider2D>(), _context.SpearTransform.GetComponent<Collider2D>(), true);
+        foreach (var collider in _context.CollidersToIgnore)
+        {
+            Physics2D.IgnoreCollision(collider, _context.ColliderIgnoreWith, true);
+        }
     }
 
     public void HandleInput(InputSignal inputSignal)
@@ -204,6 +207,9 @@ public class SpearCombat : MonoBehaviour, ICombat
         public float ShakeStrength = .1f;
         public float ShakeDuration = .15f;
         public bool IsStabbed = false;
+
+        public Collider2D[] CollidersToIgnore;
+        public Collider2D ColliderIgnoreWith;
 
         [HideInInspector] public Vector3 InitialPosition;
         [HideInInspector] public Vector3 TargetPoint;

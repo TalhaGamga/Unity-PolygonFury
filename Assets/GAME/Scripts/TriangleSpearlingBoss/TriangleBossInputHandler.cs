@@ -2,65 +2,30 @@ using R3;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInputHandler : MonoBehaviour, IInputHandler
+public class TriangleBossInputHandler : MonoBehaviour, IInputHandler
 {
     public BehaviorSubject<InputSnapshot> InputSnapshotStream { get; }
-        = new BehaviorSubject<InputSnapshot>(InputSnapshot.Empty);
+    = new BehaviorSubject<InputSnapshot>(InputSnapshot.Empty);
+
+    [SerializeField] private SensorSystem _sensorSystem;
 
     private readonly Dictionary<CharacterAction, InputSignal> _currentInputs = new();
     private readonly Dictionary<CharacterAction, InputSignal> _previousInputs = new();
     private InputSnapshot _lastSnapshot;
 
-    [SerializeField] private PlayerInputReaderSO _inputReaderSO;
+    private CompositeDisposable _disposables = new();
 
-    private void Start()
+    private void Awake()
     {
-        var input = _inputReaderSO.GetInputReader();
-
-        input.Move += direction =>
-        {
-            HandleInput(SystemType.Movement, CharacterAction.Move, direction.magnitude > 0, direction);
-        };
-
-        input.Jump += () =>
-        {
-            HandleInput(SystemType.Movement, CharacterAction.Jump);
-        };
-
-        input.JumpCancel += () =>
-        {
-            HandleInput(SystemType.Movement, CharacterAction.JumpCancel);
-        };
-
-        input.Dash += () =>
-        {
-            HandleInput(SystemType.Movement, CharacterAction.Dash);
-        };
-
-        input.Attack += () =>
-        {
-            HandleInput(SystemType.Combat, CharacterAction.Attack);
-        };
-
-        input.AttackCancel += () =>
-        {
-            HandleInput(SystemType.Combat, CharacterAction.Idle);
-        };
-
-        input.MouseDrag += position =>
-        {
-            HandleInput(SystemType.Combat, CharacterAction.Target, (position.magnitude > 0), position);
-        };
-
-        input.Reload += () =>
-        {
-            HandleInput(SystemType.Combat, CharacterAction.Reload);
-        };
-
-        input.Enable();
+        _sensorSystem.SensorSnapshotStream.Subscribe(dispatchSensorSignals).AddTo(_disposables);
     }
 
-    private void HandleInput(SystemType system, CharacterAction action, bool isHeld = true, object value = default)
+    private void OnDestroy()
+    {
+        _disposables.Dispose();
+    }
+
+    private void handleInput(SystemType system, CharacterAction action, bool isHeld = true, object value = default)
     {
         var behavior = InputBehaviorMap.Behavior.TryGetValue(action, out var b) ? b : InputBehavior.Eventful;
 
@@ -161,5 +126,39 @@ public class PlayerInputHandler : MonoBehaviour, IInputHandler
                a.Value == b.Value &&
                //a.Direction == b.Direction &&
                a.WasPresseedThisFrame == b.WasPresseedThisFrame;
+    }
+
+    private void dispatchSensorSignals(SensorSnapshot sensorSnapshot)
+    {
+        foreach (var kvp in sensorSnapshot.CurrentSignals)
+        {
+            var signalType = kvp.Key;
+            var signal = kvp.Value;
+
+            switch (signalType)
+            {
+                case SensorType.Square:
+                    handleSquareSensor(signal);
+                    break;
+
+                case SensorType.Platform:
+                    handlePlatformSensor(signal);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    private void handlePlatformSensor(SensorSignal sensorSignal)
+    {
+        // handle movement sensor
+    }
+
+    private void handleSquareSensor(SensorSignal sensorSignal)
+    {
+        // handle attack sensor
     }
 }

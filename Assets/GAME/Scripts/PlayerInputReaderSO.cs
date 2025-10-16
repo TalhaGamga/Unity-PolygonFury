@@ -1,13 +1,13 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObjects/InputReaderSO/SquareInputReaderSO")]
-public class SquareInputReaderSO : InputReaderBaseSO<SquareInputReader>
+public class PlayerInputReaderSO : InputReaderBaseSO<PlayerInputReader>
 {
-    public override SquareInputReader GetInputReader()
+    public override PlayerInputReader GetInputReader()
     {
         if (InputReader == null)
         {
-            InputReader = new SquareInputReader();
+            InputReader = new PlayerInputReader();
         }
 
         return InputReader;
